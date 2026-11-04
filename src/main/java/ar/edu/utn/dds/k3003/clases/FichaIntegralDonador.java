@@ -11,7 +11,7 @@ import java.util.List;
 
 @Document(collection = "Ficha-Integral-Donador")
 public class FichaIntegralDonador {
-    private String id;
+    private String idDonador;
     private EstadoDonadorEnum estado;
     private String categoria;
     private List<InsigniaDTO> insignias;
@@ -20,11 +20,11 @@ public class FichaIntegralDonador {
     private List<QuejaDTO> quejas;
     private EntidadBeneficaDTO entidades;
 
-    public String getId() {
-        return id;
+    public String getIdDonador() {
+        return idDonador;
     }
-    public void setId(String id) {
-        this.id = id;
+    public void setIdDonador(String idDonador) {
+        this.idDonador = idDonador;
     }
 
     public EstadoDonadorEnum getEstado() {
