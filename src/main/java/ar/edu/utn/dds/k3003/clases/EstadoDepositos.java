@@ -14,6 +14,13 @@ public class EstadoDepositos {
     private Integer tiempoIngresoAEntrega;
     private List<EntidadBeneficaDTO> entidades;
 
+    public String getIdDeposito() {
+        return idDeposito;
+    }
+    public void setIdDeposito(String idDeposito) {
+        this.idDeposito = idDeposito;
+    }
+
     public Integer getOcupacion() {
         return ocupacion;
     }

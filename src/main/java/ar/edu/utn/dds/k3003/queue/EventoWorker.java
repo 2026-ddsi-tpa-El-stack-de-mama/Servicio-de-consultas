@@ -1,5 +1,8 @@
 package ar.edu.utn.dds.k3003.queue;
 
+import ar.edu.utn.dds.k3003.clases.EstadoDepositos;
+import ar.edu.utn.dds.k3003.eventos.DepositoEvento;
+import ar.edu.utn.dds.k3003.repositories.FichaIntegralDonadorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -14,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 public class EventoWorker extends DefaultConsumer {
     private String queueName;
     private static final Logger log = LoggerFactory.getLogger(EventoWorker.class);
+    private FichaIntegralDonadorRepository fichaIntegralDonadorRepository;
 
     public EventoWorker(Channel channel, String queueName) {
         super(channel);
@@ -37,7 +41,7 @@ public class EventoWorker extends DefaultConsumer {
 
             EventoQueue evento = mapper.readValue(json, EventoQueue.class);
 
-            procesarEvento(evento);
+            procesarEvento(evento, mapper);
 
             getChannel().basicAck(envelope.getDeliveryTag(), false);
 
@@ -52,17 +56,25 @@ public class EventoWorker extends DefaultConsumer {
         }
     }
 
-    private void procesarEvento(EventoQueue evento) {
+    private void procesarEvento(EventoQueue evento, ObjectMapper mapper) {
         switch (evento.tipoEvento()) {
             /*
-            case "DepositoActualizado" -> {
-                DepositoActualizadoEvento datos = mapper.convertValue(
-                                evento.descripcion(),
-                                DepositoActualizadoEvento.class
-                        );
+            TIPOS EVENTO:
+            DepositoEvento
+             */
 
-                // Continuar
-            }*/
+            case "DepositoEvento" -> {
+                DepositoEvento depositoEvento = mapper.convertValue(
+                                evento.descripcion(),
+                                DepositoEvento.class
+                        );
+                EstadoDepositos datos = new EstadoDepositos();
+                datos.setIdDeposito(depositoEvento.id());
+
+                fichaIntegralDonadorRepository.guardar(datos);
+
+
+            }
             default -> throw new IllegalArgumentException(
                     "No existe el evento " + evento.tipoEvento()
             );
