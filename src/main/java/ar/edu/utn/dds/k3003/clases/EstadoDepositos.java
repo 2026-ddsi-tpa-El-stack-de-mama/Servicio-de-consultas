@@ -7,6 +7,7 @@ import ar.edu.utn.dds.k3003.catedra.dtos.logistica.TipoAlgoritmoEnum;
 import java.util.List;
 
 public class EstadoDepositos {
+    private String idDeposito;
     private Integer ocupacion;
     private TipoAlgoritmoEnum algoritmo;
     private List<AsignacionDTO> asignaciones;

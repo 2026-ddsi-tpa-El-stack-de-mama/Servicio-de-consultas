@@ -9,13 +9,14 @@ import ar.edu.utn.dds.k3003.catedra.dtos.logistica.DepositoDTO;
 import java.util.Map;
 
 public class NecesidadesUrgentesSinCubrir {
+    private String idNecesidad;
     private NecesidadMaterialDTO necesidadUrgente;
     private Integer nivelUrgenciaMinima;
     private TipoNecesidadMaterialEnum tipoNecesidadMaterialEnum;
     private CategoriaDTO categoria;
     private EntidadBeneficaDTO entidad;
     private Integer cantidadFaltante;
-    private Map<DepositoDTO, Integer> stock;
+    private Map<String, Integer> stock;
 
     public NecesidadMaterialDTO getNecesidadUrgente() {
         return necesidadUrgente;
@@ -59,10 +60,10 @@ public class NecesidadesUrgentesSinCubrir {
         this.cantidadFaltante = cantidadFaltante;
     }
 
-    public Map<DepositoDTO, Integer> getStock() {
+    public Map<String, Integer> getStock() {
         return stock;
     }
-    public void setStock(Map<DepositoDTO, Integer> stock) {
+    public void setStock(Map<String, Integer> stock) {
         this.stock = stock;
     }
 
