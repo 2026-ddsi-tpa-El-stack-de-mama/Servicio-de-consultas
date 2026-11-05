@@ -18,12 +18,14 @@ import java.nio.charset.StandardCharsets;
 public class EventoWorker extends DefaultConsumer {
     private String queueName;
     private static final Logger log = LoggerFactory.getLogger(EventoWorker.class);
-    private FichaIntegralDonadorRepository fichaIntegralDonadorRepository;
-    private EstadoDepositosRepository estadoDepositosRepository;
+    FichaIntegralDonadorRepository fichaIntegralDonadorRepository;
+    EstadoDepositosRepository estadoDepositosRepository;
 
-    public EventoWorker(Channel channel, String queueName) {
+    public EventoWorker(Channel channel, String queueName, FichaIntegralDonadorRepository fichaIntegralDonadorRepository, EstadoDepositosRepository estadoDepositosRepository) {
         super(channel);
         this.queueName = queueName;
+        this.fichaIntegralDonadorRepository = fichaIntegralDonadorRepository;
+        this.estadoDepositosRepository = estadoDepositosRepository;
     }
 
     public void init() throws IOException {
