@@ -2,6 +2,7 @@ package ar.edu.utn.dds.k3003.queue;
 
 import ar.edu.utn.dds.k3003.clases.EstadoDepositos;
 import ar.edu.utn.dds.k3003.eventos.DepositoEvento;
+import ar.edu.utn.dds.k3003.repositories.EstadoDepositosRepository;
 import ar.edu.utn.dds.k3003.repositories.FichaIntegralDonadorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.AMQP;
@@ -18,6 +19,7 @@ public class EventoWorker extends DefaultConsumer {
     private String queueName;
     private static final Logger log = LoggerFactory.getLogger(EventoWorker.class);
     private FichaIntegralDonadorRepository fichaIntegralDonadorRepository;
+    private EstadoDepositosRepository estadoDepositosRepository;
 
     public EventoWorker(Channel channel, String queueName) {
         super(channel);
@@ -71,7 +73,7 @@ public class EventoWorker extends DefaultConsumer {
                 EstadoDepositos datos = new EstadoDepositos();
                 datos.setIdDeposito(depositoEvento.id());
 
-                fichaIntegralDonadorRepository.guardar(datos);
+                estadoDepositosRepository.guardar(datos);
 
 
             }

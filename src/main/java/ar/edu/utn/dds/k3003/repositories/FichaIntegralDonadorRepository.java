@@ -1,7 +1,6 @@
 package ar.edu.utn.dds.k3003.repositories;
 
 import ar.edu.utn.dds.k3003.clases.FichaIntegralDonador;
-import ar.edu.utn.dds.k3003.eventos.DepositoEvento;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -16,8 +15,8 @@ public class FichaIntegralDonadorRepository {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public void guardar(DepositoEvento depositoEvento) {
-        mongoTemplate.save(depositoEvento);
+    public void guardar(FichaIntegralDonador donador) {
+        mongoTemplate.save(donador);
     }
 
     public Optional<FichaIntegralDonador> buscarPorId(String id) {
