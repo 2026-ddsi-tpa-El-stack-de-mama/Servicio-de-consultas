@@ -1,6 +1,5 @@
 package ar.edu.utn.dds.k3003.queue;
 
-import ar.edu.utn.dds.k3003.catedra.dtos.logistica.DepositoDTO;
 import ar.edu.utn.dds.k3003.clases.EstadoDepositos;
 import ar.edu.utn.dds.k3003.eventos.DepositoEvento;
 import ar.edu.utn.dds.k3003.repositories.EstadoDepositosRepository;
@@ -15,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 public class EventoWorker extends DefaultConsumer {
     private String queueName;
@@ -71,8 +71,7 @@ public class EventoWorker extends DefaultConsumer {
             case "DepositoEvento" -> {
                 DepositoEvento depositoEvento = mapper.convertValue(
                                 evento.descripcion(),
-                                DepositoEvento.class
-                        );
+                                DepositoEvento.class);
 
                 EstadoDepositos datos = new EstadoDepositos();
                 datos.setIdDeposito(depositoEvento.id());
@@ -83,6 +82,13 @@ public class EventoWorker extends DefaultConsumer {
                 datos.setEntidades(null);
                 estadoDepositosRepository.guardar(datos);
 
+            }
+            case "BorrarDepositoEvento" -> {
+                DepositoEvento depositoEvento = mapper.convertValue(
+                        evento.descripcion(),
+                        DepositoEvento.class);
+
+                estadoDepositosRepository.eliminar(depositoEvento.id());
 
             }
             default -> throw new IllegalArgumentException(

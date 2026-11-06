@@ -2,6 +2,8 @@ package ar.edu.utn.dds.k3003.repositories;
 
 import ar.edu.utn.dds.k3003.clases.EstadoDepositos;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,5 +27,9 @@ public class EstadoDepositosRepository {
 
     public Optional<List<EstadoDepositos>> buscar() {
         return Optional.of(mongoTemplate.findAll(EstadoDepositos.class));
+    }
+
+    public void eliminar(String id) {
+        mongoTemplate.remove(Query.query(Criteria.where("_id").is(id)), EstadoDepositos.class);
     }
 }
