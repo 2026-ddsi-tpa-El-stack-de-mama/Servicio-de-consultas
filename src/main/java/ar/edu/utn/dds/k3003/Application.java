@@ -36,7 +36,7 @@ public class Application implements CommandLineRunner {
         factory.setHost(env.get("E_QUEUE_HOST"));
         factory.setUsername(env.get("E_QUEUE_USERNAME"));
         factory.setPassword(env.get("E_QUEUE_PASSWORD"));
-        factory.setUsername(env.get("E_QUEUE_USERNAME"));
+        factory.setVirtualHost(env.get("E_QUEUE_USERNAME"));
         String queueName = env.get("E_QUEUE_NAME");
 
         Connection connection = factory.newConnection();
