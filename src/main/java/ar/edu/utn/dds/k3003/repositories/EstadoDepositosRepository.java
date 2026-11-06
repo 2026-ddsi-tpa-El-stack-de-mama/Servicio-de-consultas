@@ -4,6 +4,9 @@ import ar.edu.utn.dds.k3003.clases.EstadoDepositos;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public class EstadoDepositosRepository {
     private final MongoTemplate mongoTemplate;
@@ -16,4 +19,11 @@ public class EstadoDepositosRepository {
         mongoTemplate.save(estadoDepositos);
     }
 
+    public Optional<EstadoDepositos> buscarPorId(String id) {
+        return Optional.ofNullable(mongoTemplate.findById(id, EstadoDepositos.class));
+    }
+
+    public Optional<List<EstadoDepositos>> buscar() {
+        return Optional.of(mongoTemplate.findAll(EstadoDepositos.class));
+    }
 }

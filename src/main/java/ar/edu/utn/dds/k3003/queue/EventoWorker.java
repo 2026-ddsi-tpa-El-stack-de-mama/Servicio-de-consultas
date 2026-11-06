@@ -1,5 +1,6 @@
 package ar.edu.utn.dds.k3003.queue;
 
+import ar.edu.utn.dds.k3003.catedra.dtos.logistica.DepositoDTO;
 import ar.edu.utn.dds.k3003.clases.EstadoDepositos;
 import ar.edu.utn.dds.k3003.eventos.DepositoEvento;
 import ar.edu.utn.dds.k3003.repositories.EstadoDepositosRepository;
@@ -72,9 +73,14 @@ public class EventoWorker extends DefaultConsumer {
                                 evento.descripcion(),
                                 DepositoEvento.class
                         );
+
                 EstadoDepositos datos = new EstadoDepositos();
                 datos.setIdDeposito(depositoEvento.id());
-
+                datos.setOcupacion(depositoEvento.ocupacion());
+                datos.setAlgoritmo(depositoEvento.algoritmo());
+                datos.setAsignaciones(depositoEvento.asignaciones());
+                datos.setTiempoIngresoAEntrega(0);
+                datos.setEntidades(null);
                 estadoDepositosRepository.guardar(datos);
 
 
