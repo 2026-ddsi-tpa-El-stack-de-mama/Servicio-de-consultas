@@ -1,6 +1,8 @@
 package ar.edu.utn.dds.k3003.queue;
 
+import ar.edu.utn.dds.k3003.catedra.dtos.logistica.AsignacionDTO;
 import ar.edu.utn.dds.k3003.clases.EstadoDepositos;
+import ar.edu.utn.dds.k3003.eventos.AsignacionEvento;
 import ar.edu.utn.dds.k3003.eventos.DepositoEvento;
 import ar.edu.utn.dds.k3003.repositories.EstadoDepositosRepository;
 import ar.edu.utn.dds.k3003.repositories.FichaIntegralDonadorRepository;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Optional;
 
 public class EventoWorker extends DefaultConsumer {
@@ -90,6 +93,37 @@ public class EventoWorker extends DefaultConsumer {
 
                 estadoDepositosRepository.eliminar(depositoEvento.id());
 
+            }
+            case "AsignacionEvento" -> {
+               AsignacionEvento asignacionEvento = mapper.convertValue(
+                        evento.descripcion(),
+                       AsignacionEvento.class);
+
+               EstadoDepositos datos = estadoDepositosRepository.buscarPorId(asignacionEvento.depositoID()).orElseThrow();
+               datos.getAsignaciones().add(asignacionEvento.asignacionDTO());
+                estadoDepositosRepository.guardar(datos);
+            }
+            case "ModificarAsignacionEvento" -> {
+                AsignacionEvento asignacionEvento = mapper.convertValue(
+                        evento.descripcion(),
+                        AsignacionEvento.class);
+
+                EstadoDepositos datos = estadoDepositosRepository.buscarPorId(asignacionEvento.depositoID()).orElseThrow();
+                List<AsignacionDTO> asignaciones = datos.getAsignaciones();
+
+                for (int i = 0; i < asignaciones.size(); i++) {
+                    AsignacionDTO actual = asignaciones.get(i);
+                    if (actual.id().equals(asignacionEvento.asignacionDTO().id())) {
+                        asignaciones.set(i, new AsignacionDTO(
+                                actual.id(),
+                                actual.paqueteID(),
+                                actual.necesidadID(),
+                                actual.fecha(),
+                                asignacionEvento.asignacionDTO().estado()
+                        )); break;
+                    }
+                }
+                estadoDepositosRepository.guardar(datos);
             }
             default -> throw new IllegalArgumentException(
                     "No existe el evento " + evento.tipoEvento()
