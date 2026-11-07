@@ -7,10 +7,7 @@ import ar.edu.utn.dds.k3003.clases.CalidadDonacion;
 import ar.edu.utn.dds.k3003.clases.EstadoDepositos;
 import ar.edu.utn.dds.k3003.clases.FichaIntegralDonador;
 import ar.edu.utn.dds.k3003.clases.NecesidadesUrgentesSinCubrir;
-import ar.edu.utn.dds.k3003.eventos.AsignacionEvento;
-import ar.edu.utn.dds.k3003.eventos.DepositoEvento;
-import ar.edu.utn.dds.k3003.eventos.DonadorEvento;
-import ar.edu.utn.dds.k3003.eventos.NecesidadEvento;
+import ar.edu.utn.dds.k3003.eventos.*;
 import ar.edu.utn.dds.k3003.repositories.CalidadDonacionRepository;
 import ar.edu.utn.dds.k3003.repositories.EstadoDepositosRepository;
 import ar.edu.utn.dds.k3003.repositories.FichaIntegralDonadorRepository;
@@ -193,6 +190,15 @@ public class EventoWorker extends DefaultConsumer {
                 EntidadBeneficaDTO entidadEvento = mapper.convertValue(evento.descripcion(), EntidadBeneficaDTO.class);
             }
 
+            case "EntidadDepositoEvento" -> {
+                EntidadDepositoEvento entidadDepositoEvento = mapper.convertValue(evento.descripcion(), EntidadDepositoEvento.class);
+                EstadoDepositos datos = estadoDepositosRepository.buscarPorId(entidadDepositoEvento.depositoID()).orElseThrow();
+                datos.getEntidades().add(entidadDepositoEvento.entidad());
+                estadoDepositosRepository.guardar(datos);
+
+            }
+
+            //case ""
 
             default -> throw new IllegalArgumentException(
                     "No existe el evento " + evento.tipoEvento()
