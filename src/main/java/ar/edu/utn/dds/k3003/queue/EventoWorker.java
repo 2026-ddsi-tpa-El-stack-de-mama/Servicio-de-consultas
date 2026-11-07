@@ -12,6 +12,7 @@ import ar.edu.utn.dds.k3003.repositories.CalidadDonacionRepository;
 import ar.edu.utn.dds.k3003.repositories.EstadoDepositosRepository;
 import ar.edu.utn.dds.k3003.repositories.FichaIntegralDonadorRepository;
 import ar.edu.utn.dds.k3003.repositories.NecesidadesUrgentesSinCubrirRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
@@ -140,13 +142,11 @@ public class EventoWorker extends DefaultConsumer {
                         evento.descripcion(),
                         DonadorEvento.class);
 
-                FichaIntegralDonador datos = new FichaIntegralDonador();
-                datos.setIdDonador(donadorEvento.id());
+                // Puede existir: los eventos de Incentivos pueden llegar antes que este.
+                FichaIntegralDonador datos = fichaDe(donadorEvento.id());
                 datos.setNombre(donadorEvento.nombre());
                 datos.setEstado(donadorEvento.estado());
                 datos.setCategoria(donadorEvento.categoria());
-                datos.setInsignias(null);
-                datos.setMisiones(null);
                 datos.setDonacionesPorEstado(0);
                 datos.setQuejas(donadorEvento.quejasRecibidas());
 
@@ -197,12 +197,52 @@ public class EventoWorker extends DefaultConsumer {
 
             }
 
+            case "MisionInsigniaEvento" -> {
+                MisionInsigniaEvento incentivos = mapper.convertValue(
+                        evento.descripcion(),
+                        MisionInsigniaEvento.class);
+
+                FichaIntegralDonador datos = fichaDe(incentivos.donadorId());
+
+                String ultima = datos.getIncentivosActualizadosEn();
+                if (ultima != null && !Instant.parse(incentivos.ocurridoEn()).isAfter(Instant.parse(ultima))) {
+                    return;
+                }
+
+                datos.setInsignias(incentivos.insignias());
+                datos.setMisiones(incentivos.misiones());
+                datos.setProgresoActual(incentivos.progresoActual());
+                datos.setProgresoRequerido(incentivos.progresoRequerido());
+                datos.setIncentivosActualizadosEn(incentivos.ocurridoEn());
+
+                fichaIntegralDonadorRepository.guardar(datos);
+            }
+
+            case "CategoriaDonadorEvento" -> {
+                CategoriaDonadorEvento categoriaEvento = mapper.convertValue(
+                        evento.descripcion(),
+                        CategoriaDonadorEvento.class);
+
+                FichaIntegralDonador datos = fichaDe(categoriaEvento.donadorId());
+                datos.setCategoria(categoriaEvento.categoriaNueva());
+
+                fichaIntegralDonadorRepository.guardar(datos);
+            }
+
             //case ""
 
             default -> throw new IllegalArgumentException(
                     "No existe el evento " + evento.tipoEvento()
             );
         }
+    }
+
+    private FichaIntegralDonador fichaDe(String idDonador) {
+        return fichaIntegralDonadorRepository.buscarPorId(idDonador).orElseGet(() -> {
+            FichaIntegralDonador nueva = new FichaIntegralDonador();
+            nueva.setIdDonador(idDonador);
+            return nueva;
+        });
     }
 }
 
