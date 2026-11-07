@@ -1,8 +1,10 @@
 package ar.edu.utn.dds.k3003;
 
 import ar.edu.utn.dds.k3003.queue.EventoWorker;
+import ar.edu.utn.dds.k3003.repositories.CalidadDonacionRepository;
 import ar.edu.utn.dds.k3003.repositories.EstadoDepositosRepository;
 import ar.edu.utn.dds.k3003.repositories.FichaIntegralDonadorRepository;
+import ar.edu.utn.dds.k3003.repositories.NecesidadesUrgentesSinCubrirRepository;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -17,13 +19,21 @@ public class Application implements CommandLineRunner {
 
     private final EstadoDepositosRepository estadoDepositosRepository;
     private final FichaIntegralDonadorRepository fichaIntegralDonadorRepository;
+    private final NecesidadesUrgentesSinCubrirRepository necesidadesUrgentesSinCubrirRepository;
+    private final CalidadDonacionRepository calidadDonacionRepository;
+
 
     public Application(
             EstadoDepositosRepository estadoDepositosRepository,
-            FichaIntegralDonadorRepository fichaIntegralDonadorRepository
+            FichaIntegralDonadorRepository fichaIntegralDonadorRepository,
+            NecesidadesUrgentesSinCubrirRepository necesidadesUrgentesSinCubrirRepository,
+            CalidadDonacionRepository calidadDonacionRepository
+
     ) {
         this.estadoDepositosRepository = estadoDepositosRepository;
         this.fichaIntegralDonadorRepository = fichaIntegralDonadorRepository;
+        this.necesidadesUrgentesSinCubrirRepository = necesidadesUrgentesSinCubrirRepository;
+        this.calidadDonacionRepository = calidadDonacionRepository;
     }
 
     @Override
@@ -46,7 +56,9 @@ public class Application implements CommandLineRunner {
                         channel,
                         queueName,
                 fichaIntegralDonadorRepository,
-                estadoDepositosRepository
+                estadoDepositosRepository,
+                necesidadesUrgentesSinCubrirRepository,
+                calidadDonacionRepository
                 );
 
         worker.init();

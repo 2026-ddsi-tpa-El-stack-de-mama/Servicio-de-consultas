@@ -192,6 +192,8 @@ public class EventoWorker extends DefaultConsumer {
             case "EntidadEvento" -> {
                 EntidadBeneficaDTO entidadEvento = mapper.convertValue(evento.descripcion(), EntidadBeneficaDTO.class);
             }
+
+
             default -> throw new IllegalArgumentException(
                     "No existe el evento " + evento.tipoEvento()
             );
