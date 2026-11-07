@@ -23,6 +23,10 @@ public class ConsultasService {
         return Optional.of(fichaIntegralDonadorRepository.buscarPorId(id).orElseThrow());
     }
 
+    public Optional<List<FichaIntegralDonador>> getFichaIntegralDonadores(){
+        return Optional.of(fichaIntegralDonadorRepository.buscar().orElseThrow());
+    }
+
     public Optional<EstadoDepositos> getEstadoDeposito(String id){
         return Optional.of(estadoDepositosRepository.buscarPorId(id).orElseThrow());
     }
@@ -30,4 +34,6 @@ public class ConsultasService {
     public Optional<List<EstadoDepositos>> getEstadoDepositos(){
         return Optional.of(estadoDepositosRepository.buscar().orElseThrow());
     }
+
+
 }

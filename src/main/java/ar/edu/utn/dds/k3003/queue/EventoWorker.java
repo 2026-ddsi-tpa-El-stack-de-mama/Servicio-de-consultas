@@ -1,11 +1,20 @@
 package ar.edu.utn.dds.k3003.queue;
 
+import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EntidadBeneficaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.logistica.AsignacionDTO;
+import ar.edu.utn.dds.k3003.clases.CalidadDonacion;
 import ar.edu.utn.dds.k3003.clases.EstadoDepositos;
+import ar.edu.utn.dds.k3003.clases.FichaIntegralDonador;
+import ar.edu.utn.dds.k3003.clases.NecesidadesUrgentesSinCubrir;
 import ar.edu.utn.dds.k3003.eventos.AsignacionEvento;
 import ar.edu.utn.dds.k3003.eventos.DepositoEvento;
+import ar.edu.utn.dds.k3003.eventos.DonadorEvento;
+import ar.edu.utn.dds.k3003.eventos.NecesidadEvento;
+import ar.edu.utn.dds.k3003.repositories.CalidadDonacionRepository;
 import ar.edu.utn.dds.k3003.repositories.EstadoDepositosRepository;
 import ar.edu.utn.dds.k3003.repositories.FichaIntegralDonadorRepository;
+import ar.edu.utn.dds.k3003.repositories.NecesidadesUrgentesSinCubrirRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -17,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class EventoWorker extends DefaultConsumer {
@@ -24,12 +34,16 @@ public class EventoWorker extends DefaultConsumer {
     private static final Logger log = LoggerFactory.getLogger(EventoWorker.class);
     FichaIntegralDonadorRepository fichaIntegralDonadorRepository;
     EstadoDepositosRepository estadoDepositosRepository;
+    NecesidadesUrgentesSinCubrirRepository necesidadesUrgentesSinCubrirRepository;
+    CalidadDonacionRepository calidadDonacionRepository;
 
-    public EventoWorker(Channel channel, String queueName, FichaIntegralDonadorRepository fichaIntegralDonadorRepository, EstadoDepositosRepository estadoDepositosRepository) {
+    public EventoWorker(Channel channel, String queueName, FichaIntegralDonadorRepository fichaIntegralDonadorRepository, EstadoDepositosRepository estadoDepositosRepository, NecesidadesUrgentesSinCubrirRepository necesidadesUrgentesSinCubrirRepository, CalidadDonacionRepository calidadDonacionRepository) {
         super(channel);
         this.queueName = queueName;
         this.fichaIntegralDonadorRepository = fichaIntegralDonadorRepository;
         this.estadoDepositosRepository = estadoDepositosRepository;
+        this.necesidadesUrgentesSinCubrirRepository = necesidadesUrgentesSinCubrirRepository;
+        this.calidadDonacionRepository = calidadDonacionRepository;
     }
 
     public void init() throws IOException {
@@ -124,6 +138,59 @@ public class EventoWorker extends DefaultConsumer {
                     }
                 }
                 estadoDepositosRepository.guardar(datos);
+            }
+            case "DonadorEvento" -> {
+                DonadorEvento donadorEvento = mapper.convertValue(
+                        evento.descripcion(),
+                        DonadorEvento.class);
+
+                FichaIntegralDonador datos = new FichaIntegralDonador();
+                datos.setIdDonador(donadorEvento.id());
+                datos.setNombre(donadorEvento.nombre());
+                datos.setEstado(donadorEvento.estado());
+                datos.setCategoria(donadorEvento.categoria());
+                datos.setInsignias(null);
+                datos.setMisiones(null);
+                datos.setDonacionesPorEstado(0);
+                datos.setQuejas(donadorEvento.quejasRecibidas());
+
+                fichaIntegralDonadorRepository.guardar(datos);
+            }
+            case "ModificarDonadorEvento" -> {
+                DonadorEvento donadorEvento = mapper.convertValue(
+                        evento.descripcion(),
+                        DonadorEvento.class);
+
+                FichaIntegralDonador datos = fichaIntegralDonadorRepository.buscarPorId(donadorEvento.id()).orElseThrow();
+                datos.setEstado(donadorEvento.estado());
+                datos.setCategoria(donadorEvento.categoria());
+                datos.setQuejas(donadorEvento.quejasRecibidas());
+
+                fichaIntegralDonadorRepository.guardar(datos);
+            }
+
+            case "ModificarNecesidadEvento" -> {
+                NecesidadEvento necesidadEvento = mapper.convertValue(evento.descripcion(), NecesidadEvento.class);
+                NecesidadesUrgentesSinCubrir datos = necesidadesUrgentesSinCubrirRepository.buscarPorId(necesidadEvento.id()).orElseThrow();
+
+            }
+
+            case "QuejaEvento" -> {
+                DonadorDTO donadorEvento = mapper.convertValue(evento.descripcion(), DonadorDTO.class);
+                List<CalidadDonacion> calidadDonacionList = calidadDonacionRepository.buscar().orElseThrow();
+
+                for (int i = 0; i < calidadDonacionList.size(); i++) {
+                    CalidadDonacion actual = calidadDonacionList.get(i);
+                    if(Objects.equals(donadorEvento.categoria(), actual.getCategoria())){
+                        actual.getDonadorConQuejas().add(donadorEvento);
+                        calidadDonacionRepository.guardar(actual);
+                        break;
+                    }
+                }
+            }
+
+            case "EntidadEvento" -> {
+                EntidadBeneficaDTO entidadEvento = mapper.convertValue(evento.descripcion(), EntidadBeneficaDTO.class);
             }
             default -> throw new IllegalArgumentException(
                     "No existe el evento " + evento.tipoEvento()

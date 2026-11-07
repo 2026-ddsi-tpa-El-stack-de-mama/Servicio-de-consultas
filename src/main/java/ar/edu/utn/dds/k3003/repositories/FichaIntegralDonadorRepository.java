@@ -4,6 +4,7 @@ import ar.edu.utn.dds.k3003.clases.FichaIntegralDonador;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,5 +22,9 @@ public class FichaIntegralDonadorRepository {
 
     public Optional<FichaIntegralDonador> buscarPorId(String id) {
         return Optional.ofNullable(mongoTemplate.findById(id, FichaIntegralDonador.class));
+    }
+
+    public Optional<List<FichaIntegralDonador>> buscar() {
+        return Optional.of(mongoTemplate.findAll(FichaIntegralDonador.class));
     }
 }

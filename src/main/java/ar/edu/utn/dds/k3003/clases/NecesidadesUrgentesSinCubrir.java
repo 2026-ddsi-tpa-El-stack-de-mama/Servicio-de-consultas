@@ -5,14 +5,15 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EntidadBeneficaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.TipoNecesidadMaterialEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.logistica.DepositoDTO;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Map;
 
+@Document(collection = "Necesidad-Urgente-Sin-Cubrir")
 public class NecesidadesUrgentesSinCubrir {
     private String idNecesidad;
     private NecesidadMaterialDTO necesidadUrgente;
-    private Integer nivelUrgenciaMinima;
-    private TipoNecesidadMaterialEnum tipoNecesidadMaterialEnum;
+    private TipoNecesidadMaterialEnum tipoNecesidadMaterial;
     private CategoriaDTO categoria;
     private EntidadBeneficaDTO entidad;
     private Integer cantidadFaltante;
@@ -25,18 +26,11 @@ public class NecesidadesUrgentesSinCubrir {
         this.necesidadUrgente = necesidadUrgente;
     }
 
-    public Integer getNivelUrgenciaMinima() {
-        return nivelUrgenciaMinima;
-    }
-    public void setNivelUrgenciaMinima(Integer nivelUrgenciaMinima) {
-        this.nivelUrgenciaMinima = nivelUrgenciaMinima;
-    }
-
-    public TipoNecesidadMaterialEnum getTipoNecesidadMaterialEnum() {
-        return tipoNecesidadMaterialEnum;
+    public TipoNecesidadMaterialEnum getTipoNecesidadMaterial() {
+        return tipoNecesidadMaterial;
     }
     public void setTipoNecesidadMaterialEnum(TipoNecesidadMaterialEnum tipoNecesidadMaterialEnum) {
-        this.tipoNecesidadMaterialEnum = tipoNecesidadMaterialEnum;
+        this.tipoNecesidadMaterial = tipoNecesidadMaterialEnum;
     }
 
     public CategoriaDTO getCategoria() {

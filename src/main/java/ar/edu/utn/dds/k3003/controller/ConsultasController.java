@@ -22,6 +22,10 @@ public class ConsultasController {
     @GetMapping("/consultas/fichaIntegralDonador/{id}")
     Optional<FichaIntegralDonador> getFichaIntegralDonador(@PathVariable String id){return service.getFichaIntegralDonador(id);}
 
+    @GetMapping("/consultas/fichaIntegralDonador")
+    Optional<List<FichaIntegralDonador>> getFichaIntegralDonadores(){return service.getFichaIntegralDonadores();}
+
+
     @GetMapping("/consultas/estadoDepositos/{id}")
     Optional<EstadoDepositos> getEstadoDeposito(@PathVariable String id){return service.getEstadoDeposito(id);}
 
