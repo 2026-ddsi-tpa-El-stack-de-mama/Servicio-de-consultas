@@ -55,7 +55,8 @@ public class EventoWorker extends DefaultConsumer {
         try {
             //Leer el mensaje
             String json = new String(body, StandardCharsets.UTF_8);
-            ObjectMapper mapper = new ObjectMapper();
+            // findAndRegisterModules: las quejas traen LocalDate.
+            ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
             EventoQueue evento = mapper.readValue(json, EventoQueue.class);
 
@@ -155,7 +156,8 @@ public class EventoWorker extends DefaultConsumer {
                         evento.descripcion(),
                         DonadorEvento.class);
 
-                FichaIntegralDonador datos = fichaIntegralDonadorRepository.buscarPorId(donadorEvento.id()).orElseThrow();
+                FichaIntegralDonador datos = fichaDe(donadorEvento.id());
+                datos.setNombre(donadorEvento.nombre());
                 datos.setEstado(donadorEvento.estado());
                 datos.setCategoria(donadorEvento.categoria());
                 datos.setQuejas(donadorEvento.quejasRecibidas());
