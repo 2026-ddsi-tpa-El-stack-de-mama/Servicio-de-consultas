@@ -45,9 +45,7 @@ public class EventoWorker extends DefaultConsumer {
     }
 
     public void init() throws IOException {
-// Declarar la cola desde la cual consumir mensajes
         this.getChannel().queueDeclare(this.queueName, true, false, false, null);
-// Consumir mensajes de la cola
         this.getChannel().basicConsume(this.queueName, false, this);
     };
 
