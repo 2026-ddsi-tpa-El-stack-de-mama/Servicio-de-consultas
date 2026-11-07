@@ -18,6 +18,9 @@ public class FichaIntegralDonador {
     private String categoria;
     private List<InsigniaDTO> insignias;
     private List<MisionDTO> misiones;
+    private Integer progresoActual;
+    private Integer progresoRequerido;
+    private String incentivosActualizadosEn;
     private Integer donacionesPorEstado;
     private List<QuejaDTO> quejas;
 
@@ -62,6 +65,27 @@ public class FichaIntegralDonador {
     }
     public void setMisiones(List<MisionDTO> misiones) {
         this.misiones = misiones;
+    }
+
+    public Integer getProgresoActual() {
+        return progresoActual;
+    }
+    public void setProgresoActual(Integer progresoActual) {
+        this.progresoActual = progresoActual;
+    }
+
+    public Integer getProgresoRequerido() {
+        return progresoRequerido;
+    }
+    public void setProgresoRequerido(Integer progresoRequerido) {
+        this.progresoRequerido = progresoRequerido;
+    }
+
+    public String getIncentivosActualizadosEn() {
+        return incentivosActualizadosEn;
+    }
+    public void setIncentivosActualizadosEn(String incentivosActualizadosEn) {
+        this.incentivosActualizadosEn = incentivosActualizadosEn;
     }
 
     public Integer getDonacionesPorEstado() {
