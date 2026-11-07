@@ -5,12 +5,14 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EntidadBeneficaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.TipoNecesidadMaterialEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.logistica.DepositoDTO;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Map;
 
 @Document(collection = "Necesidad-Urgente-Sin-Cubrir")
 public class NecesidadesUrgentesSinCubrir {
+    @Id
     private String idNecesidad;
     private NecesidadMaterialDTO necesidadUrgente;
     private TipoNecesidadMaterialEnum tipoNecesidadMaterial;

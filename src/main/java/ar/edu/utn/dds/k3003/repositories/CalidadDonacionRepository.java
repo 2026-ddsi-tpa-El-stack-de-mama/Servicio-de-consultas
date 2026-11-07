@@ -1,6 +1,7 @@
 package ar.edu.utn.dds.k3003.repositories;
 
 import ar.edu.utn.dds.k3003.clases.CalidadDonacion;
+import ar.edu.utn.dds.k3003.clases.EstadoDepositos;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -22,6 +23,10 @@ public class CalidadDonacionRepository {
 
     public Optional<List<CalidadDonacion>> buscar() {
         return Optional.of(mongoTemplate.findAll(CalidadDonacion.class));
+    }
+
+    public Optional<CalidadDonacion> buscarPorId(String id) {
+        return Optional.ofNullable(mongoTemplate.findById(id, CalidadDonacion.class));
     }
 
 }
